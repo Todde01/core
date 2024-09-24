@@ -89,8 +89,8 @@ def setup(hass: HomeAssistant, config: ConfigType) -> bool:
 
 
 def _create_instance(
-    hass, account_name, api_key, shared_secret, token, stored_rtm_config, component
-):
+    hass: HomeAssistant, account_name: str, api_key: str, shared_secret: str, token: str, stored_rtm_config, component: EntityComponent
+) -> None:
     """Create a new Remember The Milk instance.
 
     Args:
@@ -114,15 +114,15 @@ def _create_instance(
     )
     hass.services.register(
         DOMAIN,
-        f"{account_name}_complete_task",
+        f"{account_name: str}_complete_task",
         entity.complete_task,
         schema=SERVICE_SCHEMA_COMPLETE_TASK,
     )
 
 
 def _register_new_account(
-    hass, account_name, api_key, shared_secret, stored_rtm_config, component
-):
+    hass: HomeAssistant, account_name: str, api_key: str, shared_secret: str, stored_rtm_config, component: EntityComponent
+) -> None:
     """Register a new Remember The Milk account.
 
     Args:
@@ -190,7 +190,7 @@ class RememberTheMilkConfiguration:
     This class stores the authentication token it retrieves from the backend.
     """
 
-    def __init__(self, hass):
+    def __init__(self, hass: HomeAssistant) -> None:
         """Initialize a new instance of configuration.
 
         Args:
@@ -211,12 +211,12 @@ class RememberTheMilkConfiguration:
             )
             self._config = {}
 
-    def save_config(self):
+    def save_config(self) -> None:
         """Write the configuration to a file."""
         with open(self._config_file_path, "w", encoding="utf8") as config_file:
             json.dump(self._config, config_file)
 
-    def get_token(self, profile_name):
+    def get_token(self, profile_name: str) -> str|None:
         """Get the server token for a profile.
 
         Args:
@@ -229,7 +229,7 @@ class RememberTheMilkConfiguration:
             return self._config[profile_name][CONF_TOKEN]
         return None
 
-    def set_token(self, profile_name, token):
+    def set_token(self, profile_name: str, token: str) -> None:
         """Store a new server token for a profile.
 
         Args:
@@ -240,7 +240,7 @@ class RememberTheMilkConfiguration:
         self._config[profile_name][CONF_TOKEN] = token
         self.save_config()
 
-    def delete_token(self, profile_name):
+    def delete_token(self, profile_name: str) -> None:
         """Delete a token for a profile.
 
         Usually called when the token has expired.
@@ -251,7 +251,7 @@ class RememberTheMilkConfiguration:
         self._config.pop(profile_name, None)
         self.save_config()
 
-    def _initialize_profile(self, profile_name):
+    def _initialize_profile(self, profile_name: str) -> None:
         """Initialize the data structures for a profile.
 
         Args:
@@ -262,7 +262,7 @@ class RememberTheMilkConfiguration:
         if CONF_ID_MAP not in self._config[profile_name]:
             self._config[profile_name][CONF_ID_MAP] = {}
 
-    def get_rtm_id(self, profile_name, hass_id):
+    def get_rtm_id(self, profile_name: str, hass_id: str) -> tuple|None :
         """Get the Remember The Milk IDs for a Home Assistant task ID.
 
         Args:
@@ -278,7 +278,7 @@ class RememberTheMilkConfiguration:
             return None
         return ids[CONF_LIST_ID], ids[CONF_TIMESERIES_ID], ids[CONF_TASK_ID]
 
-    def set_rtm_id(self, profile_name, hass_id, list_id, time_series_id, rtm_task_id):
+    def set_rtm_id(self, profile_name: str, hass_id: str, list_id: str, time_series_id: str, rtm_task_id: str) -> None:
         """Add/Update the RTM task ID for a Home Assistant task.
 
         Args:
