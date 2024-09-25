@@ -48,6 +48,7 @@ SERVICE_SCHEMA_CREATE_TASK = vol.Schema(
 
 SERVICE_SCHEMA_COMPLETE_TASK = vol.Schema({vol.Required(CONF_ID): cv.string})
 
+API_TOKEN_INVALID = "API token invalid"
 
 def setup(hass: HomeAssistant, config: ConfigType) -> bool:
     """Set up the Remember the Milk component.
@@ -151,7 +152,7 @@ def _register_new_account(
             configurator.notify_errors(
                 hass, request_id, "Failed to register, please try again."
             )
-            return
+            return None
 
         stored_rtm_config.set_token(account_name, token)
         _LOGGER.debug("Retrieved new token from server")
@@ -199,7 +200,7 @@ class RememberTheMilkConfiguration:
         self._config_file_path = hass.config.path(CONFIG_FILE_NAME)
         if not os.path.isfile(self._config_file_path):
             self._config = {}
-            return
+            return None
         try:
             _LOGGER.debug("Loading configuration from file: %s", self._config_file_path)
             with open(self._config_file_path, encoding="utf8") as config_file:
@@ -426,7 +427,7 @@ class RememberTheMilk(Entity):
                 hass_id,
                 self._name,
             )
-            return
+            return None
         try:
             result = self._rtm_api.rtm.timelines.create()
             timeline = result.timeline.value
@@ -464,5 +465,5 @@ class RememberTheMilk(Entity):
             str: "API token invalid" if the token is invalid, otherwise returns STATE_OK.
         """
         if not self._token_valid:
-            return "API token invalid"
+            return API_TOKEN_INVALID
         return STATE_OK
